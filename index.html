@@ -138,31 +138,59 @@
         <button onclick="submitForm()">입력하기</button>
     </div>
 
-    <script>
-        function populateSelect(id, start, end) {
-            let select = document.getElementById(id);
-            for (let i = start; i <= end; i++) {
-                let option = document.createElement("option");
-                option.value = i;
-                option.text = i;
-                select.appendChild(option);
-            }
+  <script>
+    function populateSelect(id, start, end) {
+        let select = document.getElementById(id);
+        for (let i = start; i <= end; i++) {
+            let option = document.createElement("option");
+            option.value = i;
+            option.text = i;
+            select.appendChild(option);
+        }
+    }
+
+    // 년도: 1930~2025
+    populateSelect("year", 1930, 2025);
+    
+    // 월: 1~12
+    populateSelect("month", 1, 12);
+    
+    // 일: 1~31
+    populateSelect("day", 1, 31);
+
+    function submitForm() {
+        let textInputs = document.querySelectorAll('input[type="text"]');
+        let name = textInputs[0].value.trim(); // 첫 번째 입력 필드(이름)
+        let phone = textInputs[1].value.trim(); // 두 번째 입력 필드(휴대전화)
+
+        let gender = document.querySelector('input[name="gender"]:checked');
+        let privacy = document.querySelector('input[name="privacy"]:checked'); // 개인정보취급방침 동의 여부 확인
+
+        let missingFields = [];
+
+        if (name === "") {
+            missingFields.push("이름");
+        }
+        if (!gender) {
+            missingFields.push("성별");
+        }
+        if (phone === "") {
+            missingFields.push("휴대전화 번호");
+        }
+        if (!privacy) {
+            missingFields.push("개인정보취급방침 동의 여부");
         }
 
-        // 년도: 1930~2025
-        populateSelect("year", 1930, 2025);
-        
-        // 월: 1~12
-        populateSelect("month", 1, 12);
-        
-        // 일: 1~31
-        populateSelect("day", 1, 31);
-
-        function submitForm() {
-            alert("문진표가 제출되었습니다!");
-            window.location.href = "nest_survey.html"; // 이동할 페이지
+        if (missingFields.length > 0) {
+            alert(missingFields.join(", ") + "을(를) 입력해주세요.");
+            return;
         }
-    </script>
+
+        alert("문진표가 제출되었습니다!");
+        window.location.href = "nest_survey.html"; // 이동할 페이지
+    }
+</script>
+
 
 </body>
 </html>
