@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>손상 여부 설문</title>
+    <style>
+        /* 기본 스타일 */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f2f7fc;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 헤더 스타일 */
+        .header {
+            background-color: #48a4e0;
+            color: white;
+            padding: 15px;
+            border-radius: 10px 10px 0 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .section-title {
+            text-align: left;
+            font-weight: bold;
+            margin-top: 15px;
+            border-bottom: 2px solid black;
+            padding-bottom: 5px;
+        }
+
+        .question {
+            text-align: left;
+            font-size: 1rem;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+
+        /* 선택 버튼 스타일 */
+        .option-container {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .option {
+            flex: 1;
+            background-color: #f8f9fa;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            text-align: center;
+            transition: background 0.3s ease;
+        }
+
+        .option:hover {
+            background-color: #e2e6ea;
+        }
+
+        /* 선택된 옵션 스타일 */
+        .option.selected {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+            font-weight: bold;
+        }
+
+        /* 숨김 스타일 */
+        .hidden {
+            display: none;
+        }
+
+        /* 드롭다운 스타일 */
+        select {
+            width: 100px;
+            padding: 8px;
+            margin-top: 10px;
+            font-size: 1rem;
+        }
+
+        /* 하단 버튼 */
+        .bottom-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .back-button, .next-button {
+            width: 48%;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .back-button {
+            background-color: gray;
+            color: white;
+        }
+
+        .next-button {
+            background-color: #48a4e0;
+            color: white;
+        }
+
+        .next-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">여성농업인 특수건강검진표</div>
+
+        <div class="section-title">손상</div>
+        <p class="question">1. <strong>지난 1년간 다쳐서 1일 이상 일을 못하신 적이 있습니까?</strong></p>
+        <div class="option-container" id="q1">
+            <div class="option" onclick="selectOption('q1', 1, '있다')">① 있다</div>
+            <div class="option" onclick="selectOption('q1', 2, '없다')">② 없다</div>
+        </div>
+
+        <!-- 2번 질문 (기본 숨김) -->
+        <div id="question2" class="hidden">
+            <p class="question">2. <strong>이 사고는 농작업과 관련된 것이었습니까?</strong></p>
+            <div class="option-container" id="q2">
+                <div class="option" onclick="selectOption('q2', 1, '예')">① 예</div>
+                <div class="option" onclick="selectOption('q2', 2, '아니오')">② 아니오</div>
+            </div>
+        </div>
+
+        <!-- 3번 질문 (기본 숨김) -->
+        <div id="question3" class="hidden">
+            <p class="question">3. <strong>지난 1년간 다쳐서 1일 이상 일을 못하신 농작업 관련 사고는 몇 번 발생했습니까?</strong></p>
+            <select id="accidentCount">
+                <option value="1">1 회</option>
+                <option value="2">2 회</option>
+                <option value="3">3 회</option>
+                <option value="4">4 회</option>
+                <option value="5">5 회</option>
+            </select>
+        </div>
+
+        <div class="bottom-buttons">
+            <button class="back-button" onclick="goBack()">뒤로</button>
+            <button class="next-button" onclick="goToNextPage()">다음 ➤</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedValues = {
+            question1: "",
+            question2: "",
+            question3: ""
+        };
+
+        function selectOption(questionId, optionIndex, value) {
+            let options = document.querySelectorAll(`#${questionId} .option`);
+
+            // 기존 선택 제거
+            options.forEach(option => option.classList.remove('selected'));
+
+            // 현재 선택된 버튼 강조
+            options[optionIndex - 1].classList.add('selected');
+
+            // 선택된 값 저장
+            if (questionId === "q1") {
+                selectedValues.question1 = value;
+
+                if (value === "있다") {
+                    document.getElementById("question2").classList.remove("hidden"); // 2번 질문 표시
+                } else {
+                    document.getElementById("question2").classList.add("hidden");
+                    document.getElementById("question3").classList.add("hidden");
+
+                    // 2번, 3번 선택값 초기화
+                    resetSelection("q2");
+                    resetSelection("q3");
+                    selectedValues.question2 = "";
+                    selectedValues.question3 = "";
+                }
+            }
+
+            if (questionId === "q2") {
+                selectedValues.question2 = value;
+
+                if (value === "예") {
+                    document.getElementById("question3").classList.remove("hidden"); // 3번 질문 표시
+                } else {
+                    document.getElementById("question3").classList.add("hidden");
+
+                    // 3번 선택값 초기화
+                    selectedValues.question3 = "";
+                }
+            }
+        }
+
+        function resetSelection(questionId) {
+            let options = document.querySelectorAll(`#${questionId} .option`);
+            options.forEach(option => option.classList.remove('selected'));
+        }
+
+        function goBack() {
+            alert("이전 페이지로 이동합니다.");
+            window.history.back();
+        }
+
+        function goToNextPage() {
+            if (selectedValues.question1 === "있다" && selectedValues.question2 === "예") {
+                selectedValues.question3 = document.getElementById("accidentCount").value;
+            }
+
+            alert(`선택한 값:\n1번: ${selectedValues.question1}\n2번: ${selectedValues.question2}\n3번: ${selectedValues.question3}`);
+            window.location.href = "survey-step5.html"; // 실제 다음 페이지 경로 변경
+        }
+    </script>
+
+</body>
+</html>

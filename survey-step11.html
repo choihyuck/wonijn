@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>근골격계 통증 문진</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f2f7fc;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            font-size: 20px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .header {
+            background-color: #48a4e0;
+            color: white;
+            padding: 20px;
+            border-radius: 10px 10px 0 0;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .question-title {
+            text-align: left;
+            font-weight: bold;
+            margin-top: 15px;
+            border-bottom: 2px solid black;
+            padding-bottom: 5px;
+            font-size: 22px;
+        }
+
+        .question {
+            text-align: left;
+            font-size: 20px;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+
+        .answer-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .answer-button {
+            width: 48%;
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 15px;
+            font-size: 20px;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .answer-button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .answer-button.selected {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .bottom-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+
+        .back-button, .next-button {
+            width: 48%;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .back-button {
+            background-color: gray;
+            color: white;
+        }
+
+        .next-button {
+            background-color: #a3d5f7;
+            color: white;
+            cursor: not-allowed;
+        }
+
+        .next-button.active {
+            background-color: #007bff;
+            cursor: pointer;
+        }
+
+        @media screen and (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">여성농업인 특수건강검진표</div>
+
+        <div class="question-title">지난 1년간 관절이나 근육에 통증을 경험한 적이 있는지 묻는 질문입니다.</div>
+
+        <div class="question">
+            <strong>손</strong>
+        </div>
+
+        <!-- 1번 질문 -->
+        <div class="question" data-question="1">
+            1. 지난 1년 동안 해당 신체부위에 통증을 경험하였습니까?
+            <div class="answer-container">
+                <button class="answer-button" onclick="selectAnswer(1, '예')">① 예</button>
+                <button class="answer-button" onclick="selectAnswer(1, '아니오')">② 아니오</button>
+            </div>
+        </div>
+
+        <!-- 2~5번 질문 (초기에는 숨김) -->
+        <div id="extraQuestions" class="hidden">
+            <div class="question" data-question="2">
+                2. 이 통증으로 인해 지난 1년간 병원에서 치료를 받은 적이 있습니까?
+                <div class="answer-container">
+                    <button class="answer-button" onclick="selectAnswer(2, '예')">① 예</button>
+                    <button class="answer-button" onclick="selectAnswer(2, '아니오')">② 아니오</button>
+                </div>
+            </div>
+
+            <div class="question" data-question="3">
+                3. 이 통증은 <strong>30일 이상</strong> 지속되었습니까?
+                <div class="answer-container">
+                    <button class="answer-button" onclick="selectAnswer(3, '예')">① 예</button>
+                    <button class="answer-button" onclick="selectAnswer(3, '아니오')">② 아니오</button>
+                </div>
+            </div>
+
+            <div class="question" data-question="4">
+                4. 지난 1년간 몇 달 동안 통증이 있었습니까?
+                <div class="answer-container">
+                    <button class="answer-button" onclick="selectAnswer(4, '1달 미만')">① 1달 미만</button>
+                    <button class="answer-button" onclick="selectAnswer(4, '1~6달 미만')">② 1~6달 미만</button>
+                    <button class="answer-button" onclick="selectAnswer(4, '6~12달')">③ 6~12달</button>
+                </div>
+            </div>
+
+            <div class="question" data-question="5">
+                5. 최근 1주일 사이에도 통증이 있었습니까?
+                <div class="answer-container">
+                    <button class="answer-button" onclick="selectAnswer(5, '예')">① 예</button>
+                    <button class="answer-button" onclick="selectAnswer(5, '아니오')">② 아니오</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-buttons">
+            <button class="back-button" onclick="goBack()">뒤로</button>
+            <button class="next-button" id="nextButton" onclick="goToNextPage()" disabled>다음 ➤</button>
+        </div>
+    </div>
+
+    <script>
+        let answers = {};
+
+        function selectAnswer(questionNumber, answer) {
+            let buttons = document.querySelectorAll(`[data-question="${questionNumber}"] .answer-button`);
+            buttons.forEach(btn => btn.classList.remove("selected"));
+
+            let selectedButton = [...buttons].find(btn => btn.innerText.includes(answer));
+            if (selectedButton) selectedButton.classList.add("selected");
+
+            answers[questionNumber] = answer;
+
+            if (questionNumber === 1) {
+                if (answer === "예") {
+                    document.getElementById("extraQuestions").classList.remove("hidden");
+                } else {
+                    document.getElementById("extraQuestions").classList.add("hidden");
+                    clearExtraAnswers(); // 추가 질문 초기화
+                }
+            }
+
+            checkAllAnswered();
+        }
+
+        function clearExtraAnswers() {
+            for (let i = 2; i <= 5; i++) {
+                delete answers[i];
+                document.querySelectorAll(`[data-question="${i}"] .answer-button`).forEach(btn => btn.classList.remove("selected"));
+            }
+        }
+
+        function checkAllAnswered() {
+            let nextButton = document.getElementById("nextButton");
+            nextButton.disabled = !(answers[1] === "아니오" || Object.keys(answers).length >= 5);
+            nextButton.classList.toggle("active", !nextButton.disabled);
+        }
+        function goBack() {
+            window.location.href = "survey-step10.html";  // 이전 페이지
+        }
+
+        function goToNextPage() {
+            if (document.getElementById("nextButton").disabled) return;
+            window.location.href = "survey-step12.html";  // 다음 페이지
+        }
+    </script>
+
+</body>
+</html>

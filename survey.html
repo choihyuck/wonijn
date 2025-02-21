@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>여성농업인 특수건강검진표</title>
+    <style>
+        /* 기본 스타일 */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f2f7fc;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 헤더 스타일 */
+        .header {
+            background-color: #48a4e0;
+            color: white;
+            padding: 15px;
+            border-radius: 10px 10px 0 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .section-title {
+            text-align: left;
+            font-weight: bold;
+            margin-top: 15px;
+            border-bottom: 2px solid black;
+            padding-bottom: 5px;
+        }
+
+        .question {
+            text-align: left;
+            font-size: 1rem;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+
+        /* 연도 선택 */
+        .year-select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        /* 버튼 스타일 */
+        .answer-button {
+            display: block;
+            width: 100%;
+            background-color: #f8f9fa;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            font-size: 1rem;
+            text-align: left;
+            margin: 8px 0;
+        }
+
+        .answer-button:hover {
+            background-color: #e2e6ea;
+        }
+
+        /* 하단 버튼 */
+        .bottom-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .cancel-button {
+            width: 48%;
+            background-color: gray;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .next-button {
+            width: 48%;
+            background-color: #48a4e0;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .next-button:hover {
+            background-color: #0056b3;
+        }
+
+        @media screen and (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            .answer-button {
+                font-size: 0.9rem;
+            }
+            .cancel-button, .next-button {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">여성농업인 특수건강검진표</div>
+
+        <div class="section-title">직업적 특성</div>
+        <p>각 질문 사항에 대해 답변해 주세요.</p>
+
+        <div class="question">1. [경력] 언제부터 농업에 종사하기 시작하였습니까?</div>
+        <select class="year-select" id="year">
+            <option value="">-- 년도 --</option>
+        </select>
+
+        <div class="question">2. [겸업] 농업에만 종사하십니까?</div>
+<button class="answer-button" id="yesBtn" onclick="selectAnswer('yes')">① 예 (전업)</button>
+<button class="answer-button" id="noBtn" onclick="selectAnswer('no')">② 아니오, 농업이 아닌 다른 일에도 종사합니다 (겸업)</button>
+
+<script>
+    function selectAnswer(selected) {
+        let yesBtn = document.getElementById("yesBtn");
+        let noBtn = document.getElementById("noBtn");
+
+        if (selected === "yes") {
+            yesBtn.style.backgroundColor = "#48a4e0"; // 선택된 버튼 색상 변경
+            yesBtn.style.color = "white";
+            noBtn.style.backgroundColor = "#f8f9fa"; // 다른 버튼 원래 색상으로 복구
+            noBtn.style.color = "black";
+        } else {
+            noBtn.style.backgroundColor = "#48a4e0"; // 선택된 버튼 색상 변경
+            noBtn.style.color = "white";
+            yesBtn.style.backgroundColor = "#f8f9fa"; // 다른 버튼 원래 색상으로 복구
+            yesBtn.style.color = "black";
+        }
+    }
+</script>
+
+        <div class="bottom-buttons">
+            <button class="cancel-button">작성취소</button>
+            <button class="next-button" onclick="goToNextPage()">다음 ➤</button>
+        </div>
+    </div>
+
+    <script>
+        // 연도 선택 목록 자동 생성
+        function populateYearSelect() {
+            let yearSelect = document.getElementById("year");
+            let currentYear = new Date().getFullYear();
+            for (let i = currentYear; i >= 1930; i--) {
+                let option = document.createElement("option");
+                option.value = i;
+                option.text = i + "년";
+                yearSelect.appendChild(option);
+            }
+        }
+        populateYearSelect();
+
+        // 다음 페이지 이동 함수
+        function goToNextPage() {
+            alert("다음 질문으로 이동합니다!");
+            window.location.href = "survey-step2.html"; // 실제 다음 페이지 파일명으로 변경
+        }
+    </script>
+
+</body>
+</html>

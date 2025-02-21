@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>검진 완료</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f2f7fc;
+            text-align: center;
+        }
+        .message-box {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="message-box">
+        검진을 완료하셨습니다.<br><br>
+        감사합니다.<br><br>
+        화면을 닫아 주세요.
+    </div>
+
+    <script>
+        // 10초 후 자동으로 창 닫기 (사용자가 직접 연 창에서만 가능)
+        setTimeout(function() {
+            window.close();
+        }, 10000);
+    </script>
+
+</body>
+</html>

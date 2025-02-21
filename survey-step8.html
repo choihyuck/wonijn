@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>농약작업 문진</title>
+    <style>
+        /* 기본 스타일 */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f2f7fc;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            font-size: 20px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        /* 헤더 스타일 */
+        .header {
+            background-color: #48a4e0;
+            color: white;
+            padding: 20px;
+            border-radius: 10px 10px 0 0;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .question-title {
+            text-align: left;
+            font-weight: bold;
+            margin-top: 15px;
+            border-bottom: 2px solid black;
+            padding-bottom: 5px;
+            font-size: 22px;
+        }
+
+        .question {
+            text-align: left;
+            font-size: 20px;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+
+        /* 선택지 스타일 */
+        .dropdown {
+            font-size: 18px;
+            padding: 10px;
+            width: 100px;
+        }
+
+        .answer-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .answer-button {
+            width: 100%;
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 15px;
+            font-size: 20px;
+            cursor: pointer;
+            text-align: left;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            margin: 5px 0;
+        }
+
+        .answer-button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .answer-button.selected {
+            background-color: #007bff;
+            color: white;
+        }
+
+        /* 하단 버튼 스타일 */
+        .bottom-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+
+        .back-button, .next-button {
+            width: 48%;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .back-button {
+            background-color: gray;
+            color: white;
+        }
+
+        .next-button {
+            background-color: #a3d5f7;
+            color: white;
+            cursor: not-allowed;
+        }
+
+        .next-button.active {
+            background-color: #007bff;
+            cursor: pointer;
+        }
+
+        @media screen and (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">여성농업인 특수건강검진표</div>
+
+        <div class="question-title">각 질문 사항에 대해 답변해 주세요.</div>
+
+        <!-- 1번 질문 -->
+        <div class="question">
+            1. 농업에 종사하신 이래, <strong>농약작업(혼합, 살포, 살포보조, 정리 포함)</strong>을 총 몇 년 하셨습니까?
+        </div>
+        <select id="yearSelect" class="dropdown" onchange="checkAllAnswered()">
+            <option value="">총 _ 년</option>
+        </select>
+
+        <!-- 2번 질문 -->
+        <div class="question">
+            2. <strong>지난 1년간</strong> 농약 살포 후 48시간 이내, 살포된 장소에서 작업을 하신 날은 몇 일입니까? (한 적 없으면 0으로 입력)
+        </div>
+        <select id="daySelect" class="dropdown" onchange="checkAllAnswered()">
+            <option value="">총 _ 일</option>
+        </select>
+
+        <!-- 3번 질문 -->
+        <div class="question">
+            3. <strong>지난 1년간</strong>, 농약작업(혼합, 살포, 살포보조, 정리 포함)을 하신 적이 있습니까?
+        </div>
+        <div class="answer-container">
+            <button class="answer-button" onclick="selectAnswer(1)">① 아니오</button>
+            <button class="answer-button" onclick="selectAnswer(2)">② 예, 주도적으로 농약작업을 합니다.</button>
+            <button class="answer-button" onclick="selectAnswer(3)">③ 예, 보조작업자로 참여합니다.</button>
+        </div>
+
+        <div class="bottom-buttons">
+            <button class="back-button" onclick="goBack()">뒤로</button>
+            <button class="next-button" id="nextButton" onclick="goToNextPage()" disabled>다음 ➤</button>
+        </div>
+    </div>
+
+    <script>
+        // 1번, 2번 질문 드롭다운 생성
+        window.onload = function() {
+            let yearSelect = document.getElementById("yearSelect");
+            let daySelect = document.getElementById("daySelect");
+
+            for (let i = 0; i <= 50; i++) {
+                let option = document.createElement("option");
+                option.value = i;
+                option.text = `${i} 년`;
+                yearSelect.appendChild(option);
+            }
+
+            for (let i = 0; i <= 99; i++) {
+                let option = document.createElement("option");
+                option.value = i;
+                option.text = `${i} 일`;
+                daySelect.appendChild(option);
+            }
+        };
+
+        let selectedAnswer = null;
+
+        function selectAnswer(option) {
+            // 모든 버튼 선택 해제
+            document.querySelectorAll(".answer-button").forEach(btn => btn.classList.remove("selected"));
+
+            // 해당 버튼 선택
+            document.querySelectorAll(".answer-button")[option - 1].classList.add("selected");
+            selectedAnswer = option;
+
+            checkAllAnswered();
+        }
+
+        function checkAllAnswered() {
+            let nextButton = document.getElementById("nextButton");
+            let yearValue = document.getElementById("yearSelect").value;
+            let dayValue = document.getElementById("daySelect").value;
+
+            // 모든 질문이 응답되어야 버튼 활성화
+            if (yearValue !== "" && dayValue !== "" && selectedAnswer !== null) {
+                nextButton.classList.add("active");
+                nextButton.disabled = false;
+            } else {
+                nextButton.classList.remove("active");
+                nextButton.disabled = true;
+            }
+        }
+
+        function goBack() {
+            window.location.href = "survey-step7.html";  // 이전 페이지
+        }
+
+        function goToNextPage() {
+            if (document.getElementById("nextButton").disabled) return;
+            window.location.href = "survey-step9.html";  // 다음 페이지
+        }
+    </script>
+
+</body>
+</html>

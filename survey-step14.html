@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>상지증상 (quick-DASH)</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f2f7fc;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            font-size: 18px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .header {
+            background-color: #48a4e0;
+            color: white;
+            padding: 15px;
+            border-radius: 10px 10px 0 0;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .question-title {
+            text-align: left;
+            font-weight: bold;
+            margin-top: 15px;
+            border-bottom: 2px solid black;
+            padding-bottom: 5px;
+            font-size: 20px;
+        }
+
+        .question {
+            text-align: left;
+            font-size: 18px;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+
+        .answer-container {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+
+        .answer-button {
+            width: 19%;
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            margin: 2px;
+        }
+
+        .answer-button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .answer-button.selected {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .bottom-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .back-button, .next-button {
+            width: 48%;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .back-button {
+            background-color: gray;
+            color: white;
+        }
+
+        .next-button {
+            background-color: #a3d5f7;
+            color: white;
+            cursor: not-allowed;
+        }
+
+        .next-button.active {
+            background-color: #007bff;
+            cursor: pointer;
+        }
+
+        @media screen and (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            .answer-button {
+                width: 30%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">여성농업인 특수건강검진표</div>
+
+        <div class="question-title">상지증상 (quick-DASH)</div>
+
+        <div class="question">
+            <strong>주증상 신체부위를 선택해주세요.</strong>
+        </div>
+        <div class="answer-container">
+            <button class="answer-button" onclick="selectSingleChoice('bodyPart', this)">① 어깨</button>
+            <button class="answer-button" onclick="selectSingleChoice('bodyPart', this)">② 팔꿈치</button>
+            <button class="answer-button" onclick="selectSingleChoice('bodyPart', this)">③ 손</button>
+        </div>
+
+        <div class="question-title">최근 1주간 아래 동작을 수행하는데 불편했던 정도를 선택하세요.</div>
+
+        <!-- 1~6번 질문 -->
+        <div class="question">1. 물체를 옮기거나 새 타지 뚜껑 열기</div>
+        <div class="answer-container">
+            <button class="answer-button" onclick="selectSingleChoice('q1', this)">매우 쉬움</button>
+            <button class="answer-button" onclick="selectSingleChoice('q1', this)">약간 어려움</button>
+            <button class="answer-button" onclick="selectSingleChoice('q1', this)">보통 어려움</button>
+            <button class="answer-button" onclick="selectSingleChoice('q1', this)">매우 어려움</button>
+            <button class="answer-button" onclick="selectSingleChoice('q1', this)">전혀 못함</button>
+        </div>
+
+        <div class="question">2. 힘든 집안일 하기 (벽 청소, 바닥 청소 등)</div>
+        <div class="answer-container">
+            <button class="answer-button" onclick="selectSingleChoice('q2', this)">매우 쉬움</button>
+            <button class="answer-button" onclick="selectSingleChoice('q2', this)">약간 어려움</button>
+            <button class="answer-button" onclick="selectSingleChoice('q2', this)">보통 어려움</button>
+            <button class="answer-button" onclick="selectSingleChoice('q2', this)">매우 어려움</button>
+            <button class="answer-button" onclick="selectSingleChoice('q2', this)">전혀 못함</button>
+        </div>
+
+        <div class="question">3. 쇼핑백이나 서류 가방 들고 가기</div>
+        <div class="answer-container">
+            <button class="answer-button" onclick="selectSingleChoice('q3', this)">매우 쉬움</button>
+            <button class="answer-button" onclick="selectSingleChoice('q3', this)">약간 어려움</button>
+            <button class="answer-button" onclick="selectSingleChoice('q3', this)">보통 어려움</button>
+            <button class="answer-button" onclick="selectSingleChoice('q3', this)">매우 어려움</button>
+            <button class="answer-button" onclick="selectSingleChoice('q3', this)">전혀 못함</button>
+        </div>
+        <div class="question">4. 등 닦기 (샤워할 때)</div>
+        <div class="answer-container" id="q4">
+            <button class="answer-button" onclick="selectSingleChoice('q4', this)">매우 쉬움</button>
+            <button class="answer-button" onclick="selectSingleChoice('q4', this)">약간 어려움</button>
+            <button class="answer-button" onclick="selectSingleChoice('q4', this)">보통 어려움</button>
+            <button class="answer-button" onclick="selectSingleChoice('q4', this)">매우 어려움</button>
+            <button class="answer-button" onclick="selectSingleChoice('q4', this)">전혀 못함</button>
+        </div>
+
+ <div class="question">5. 칼로 음식 자르기</div>
+        <div class="answer-container">
+            <button class="answer-button" onclick="selectSingleChoice('q5', this)">매우 쉬움</button>
+            <button class="answer-button" onclick="selectSingleChoice('q5', this)">약간 어려움</button>
+            <button class="answer-button" onclick="selectSingleChoice('q5', this)">보통 어려움</button>
+            <button class="answer-button" onclick="selectSingleChoice('q5', this)">매우 어려움</button>
+            <button class="answer-button" onclick="selectSingleChoice('q5', this)">전혀 못함</button>
+        </div>
+
+        <div class="question">6. 팔, 어깨, 손에 어느 정도의 힘이나 충격이 가는 여가 활동(골프, 망치질, 테니스 등등)</div>
+        <div class="answer-container">
+            <button class="answer-button" onclick="selectSingleChoice('q6', this)">매우 쉬움</button>
+            <button class="answer-button" onclick="selectSingleChoice('q6', this)">약간 어려움</button>
+            <button class="answer-button" onclick="selectSingleChoice('q6', this)">보통 어려움</button>
+            <button class="answer-button" onclick="selectSingleChoice('q6', this)">매우 어려움</button>
+            <button class="answer-button" onclick="selectSingleChoice('q6', this)">전혀 못함</button>
+        </div>
+        <div class="bottom-buttons">
+            <button class="back-button">뒤로</button>
+            <button class="next-button" id="nextButton" onclick="goToNextPage()" disabled>다음 ➤</button>
+        </div>
+    </div>
+
+    <script>
+        let answers = {};
+
+        function selectSingleChoice(question, element) {
+            let buttons = document.querySelectorAll(`[onclick^="selectSingleChoice('${question}'"]`);
+            buttons.forEach(btn => btn.classList.remove("selected"));
+            element.classList.add("selected");
+            answers[question] = element.innerText;
+
+            checkAllAnswered();
+        }
+
+        function checkAllAnswered() {
+            let nextButton = document.getElementById("nextButton");
+            nextButton.disabled = Object.keys(answers).length < 7;
+           
+            nextButton.classList.toggle("active", !nextButton.disabled);
+       
+        }   
+        function goToNextPage() {
+        if (document.getElementById("nextButton").disabled) return;
+        window.location.href = "survey-step15.html";  
+    }
+    </script>
+</body>
+</html>

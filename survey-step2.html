@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>농작업 순위 선택</title>
+    <style>
+        /* 기본 스타일 */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f2f7fc;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 헤더 스타일 */
+        .header {
+            background-color: #48a4e0;
+            color: white;
+            padding: 15px;
+            border-radius: 10px 10px 0 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .section-title {
+            text-align: left;
+            font-weight: bold;
+            margin-top: 15px;
+            border-bottom: 2px solid black;
+            padding-bottom: 5px;
+        }
+
+        .question {
+            text-align: left;
+            font-size: 1rem;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+
+        /* 입력 테이블 스타일 */
+        .task-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .task-table td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        .select-button {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        /* 팝업 모달 스타일 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 700px;
+            text-align: center;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal h2 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            border-bottom: 2px solid black;
+            padding-bottom: 5px;
+        }
+
+        .crop-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .crop-grid button {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        .crop-grid button:hover {
+            background-color: #e2e6ea;
+        }
+
+        .close-button {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #48a4e0;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .bottom-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .back-button, .next-button {
+            width: 48%;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .back-button {
+            background-color: gray;
+            color: white;
+        }
+
+        .next-button {
+            background-color: #48a4e0;
+            color: white;
+        }
+
+        @media screen and (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            .crop-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">여성농업인 특수건강검진표</div>
+
+        <div class="section-title">직업적 특성</div>
+        <p class="question">3. [농작업순위] 지난 1년간 많이 일했던 작목을 선택하세요.</p>
+
+        <table class="task-table">
+            <tr>
+                <td>① 1 순위:</td>
+                <td><button class="select-button" onclick="openModal(1)">선택</button></td>
+                <td><input type="text" id="selectedCrop1" placeholder="선택된 작목"></td>
+            </tr>
+            <tr id="etcField1" style="display: none;">
+                <td>'기타' 작목이름:</td>
+                <td colspan="2"><input type="text" id="etcCrop1" maxlength="20" placeholder="(20자 이내)"></td>
+            </tr>
+            <tr>
+                <td>② 2 순위:</td>
+                <td><button class="select-button" onclick="openModal(2)">선택</button></td>
+                <td><input type="text" id="selectedCrop2" placeholder="선택된 작목"></td>
+            </tr>
+          
+            <tr id="etcField2" style="display: none;">
+                <td>'기타' 작목이름:</td>
+                <td colspan="2"><input type="text" id="etcCrop2" maxlength="20" placeholder="(20자 이내)"></td>
+            </tr>
+        </table>
+
+
+        <div class="bottom-buttons">
+            <button class="back-button" onclick="goBack()">뒤로</button>
+            <button class="next-button" onclick="goToNextPage()">다음 ➤</button>
+        </div>
+    </div>
+
+    <!-- 팝업 모달 -->
+    <div class="modal" id="cropModal">
+        <div class="modal-content">
+            <h2>1순위로 일했던 시간이 많았던 작목을 선택하세요.</h2>
+            
+            <p><strong>식량작물</strong></p>
+            <div class="crop-grid">
+                <button onclick="selectCrop('논벼')">1.논벼</button>
+                <button onclick="selectCrop('밭벼')">2.밭벼</button>
+                <button onclick="selectCrop('보리')">3.보리</button>
+                <button onclick="selectCrop('옥수수')">4.옥수수</button>
+                <button onclick="selectCrop('콩')">5.콩</button>
+                <button onclick="selectCrop('팥')">6.팥</button>
+                <button onclick="selectCrop('감자')">7.감자</button>
+                <button onclick="selectCrop('고구마')">8.고구마</button>
+                <button onclick="selectCrop('참깨')">9.참깨</button>
+                <button onclick="selectCrop('들깨')">10.들깨</button>
+                <button onclick="selectCrop('땅콩')">11.땅콩</button>
+                <button onclick="selectCrop('밀')">12.밀</button>
+                <button onclick="selectCrop('기타')">13.기타</button>
+            </div>
+
+            <p><strong>노지(밭) 채소</strong></p>
+            <div class="crop-grid">
+                <button onclick="selectCrop('배추')">21.배추</button>
+                <button onclick="selectCrop('무')">22.무</button>
+                <button onclick="selectCrop('고추')">23.고추</button>
+                <button onclick="selectCrop('양파')">24.양파</button>
+                <button onclick="selectCrop('대파')">25.대파</button>
+                <button onclick="selectCrop('마늘')">26.마늘</button>
+                <button onclick="selectCrop('시금치')">27.시금치</button>
+                <button onclick="selectCrop('상추')">28.상추</button>
+                <button onclick="selectCrop('호박')">29.호박</button>
+                <button onclick="selectCrop('양배추')">30.양배추</button>
+                <button onclick="selectCrop('오이')">31.오이</button>
+                <button onclick="selectCrop('수박')">32.수박</button>
+                <button onclick="selectCrop('당근')">33.당근</button>
+                <button onclick="selectCrop('기타')">34.기타</button>
+            </div>
+
+            <p><strong>시설(하우스) 채소</strong></p>
+            <div class="crop-grid">
+                <button onclick="selectCrop('배추')">41.배추</button>
+                <button onclick="selectCrop('무')">42.무</button>
+                <button onclick="selectCrop('고추')">43.고추</button>
+                <button onclick="selectCrop('시금치')">44.시금치</button>
+                <button onclick="selectCrop('상추')">45.상추</button>
+                <button onclick="selectCrop('호박')">46.호박</button>
+                <button onclick="selectCrop('오이')">47.오이</button>
+                <button onclick="selectCrop('수박')">48.수박</button>
+                <button onclick="selectCrop('토마토')">49.토마토</button>
+                <button onclick="selectCrop('딸기')">50.딸기</button>
+                <button onclick="selectCrop('참외')">51.참외</button>
+                <button onclick="selectCrop('서양채소')">52.서양채소</button>
+                <button onclick="selectCrop('장미,국화')">53.장미,국화</button>
+                <button onclick="selectCrop('기타')">54.기타</button>
+            </div>
+
+            <p><strong>과수</strong></p>
+            <div class="crop-grid">
+                <button onclick="selectCrop('사과')">61.사과</button>
+                <button onclick="selectCrop('배')">62.배</button>
+                <button onclick="selectCrop('복숭아')">63.복숭아</button>
+                <button onclick="selectCrop('단감')">64.단감</button>
+                <button onclick="selectCrop('노지포도')">65.노지포도</button>
+                <button onclick="selectCrop('온실포도')">66.온실포도</button>
+                <button onclick="selectCrop('감귤')">67.감귤</button>
+                <button onclick="selectCrop('자두')">68.자두</button>
+                <button onclick="selectCrop('매실')">69.매실</button>
+                <button onclick="selectCrop('기타')">70.기타</button>
+                
+            </div>
+
+            <p><strong>축산(가축)</strong></p>
+            <div class="crop-grid">
+                <button onclick="selectCrop('한우')">71.한우</button>
+                <button onclick="selectCrop('육우')">72.육우</button>
+                <button onclick="selectCrop('젖소')">73.젖소</button>
+                <button onclick="selectCrop('돼지')">74.돼지</button>
+                <button onclick="selectCrop('닭')">75.닭</button>
+                <button onclick="selectCrop('오리')">76.오리</button>
+                <button onclick="selectCrop('염소')">77.염소</button>
+                <button onclick="selectCrop('기타')">78.기타</button>
+                
+            </div>
+
+            <p><strong>기타</strong></p>
+            <div class="crop-grid">
+                <button onclick="selectCrop('화초작물')">81.화초작물</button>
+                <button onclick="selectCrop('산나물')">82.산나물</button>
+                <button onclick="selectCrop('관상나물')">83.관상나물</button>
+                <button onclick="selectCrop('약용작물')">84.약용작물</button>
+                <button onclick="selectCrop('표고버섯')">85.표고버섯</button>
+                <button onclick="selectCrop('86.기타')">86.기타</button>
+            </div>
+
+            <button class="close-button" onclick="closeModal()">닫기</button>
+        </div>
+    </div>
+
+    <script>
+    let selectedField = 1;
+    function goToNextPage() {
+                window.location.href = "survey-step3.html"; // 실제 다음 페이지 경로 변경
+        }
+function openModal(field) {
+    selectedField = field;
+    document.getElementById("cropModal").style.display = "block";
+}
+
+function closeModal() {
+    document.getElementById("cropModal").style.display = "none";
+}
+
+function selectCrop(selection) {
+    let inputField = document.getElementById("selectedCrop" + selectedField);
+    let etcField = document.getElementById("etcField" + selectedField); // 기타 입력 필드 컨테이너
+    let etcInput = document.getElementById("etcCrop" + selectedField); // 기타 입력 필드
+
+    inputField.value = selection; // 선택된 작목 표시
+
+    if (selection.includes("기타")) {
+        etcField.style.display = "table-row"; // 기타 입력 필드 표시
+        etcInput.focus(); // 자동 포커스 이동
+    } else {
+        etcField.style.display = "none"; // 기타 입력 필드 숨김
+        etcInput.value = ""; // 기타 입력 필드 초기화
+    }
+
+    closeModal();
+    }
+    </script>
+
+</body>
+</html>

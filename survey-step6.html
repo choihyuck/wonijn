@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>질병력 문진</title>
+    <style>
+        /* 기본 스타일 */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f2f7fc;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            max-height: 80vh;
+            overflow-y: auto;
+            font-size: 20px;
+        }
+
+        /* 헤더 스타일 */
+        .header {
+            background-color: #48a4e0;
+            color: white;
+            padding: 20px;
+            border-radius: 10px 10px 0 0;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .question-title {
+            text-align: left;
+            font-weight: bold;
+            margin-top: 15px;
+            border-bottom: 2px solid black;
+            padding-bottom: 5px;
+            font-size: 22px;
+        }
+
+        .question {
+            text-align: left;
+            font-size: 20px;
+            margin: 15px 0;
+            font-weight: bold;
+        }
+
+        /* 버튼 스타일 */
+        .answer-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .answer-button {
+            width: 48%;
+            background-color: #ffffff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 15px;
+            font-size: 20px;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .answer-button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .answer-button.selected {
+            background-color: #007bff;
+            color: white;
+        }
+
+        /* 하단 버튼 스타일 */
+        .bottom-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 25px;
+        }
+
+        .back-button, .next-button {
+            width: 48%;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .back-button {
+            background-color: gray;
+            color: white;
+        }
+
+        .next-button {
+            background-color: #a3d5f7;
+            color: white;
+            cursor: not-allowed;
+        }
+
+        .next-button.active {
+            background-color: #007bff;
+            cursor: pointer;
+        }
+
+        @media screen and (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">여성농업인 특수건강검진표</div>
+
+        <div class="question-title">3. 친부모님 중 아래 질환이 발생한 적이 있습니까?</div>
+
+        <div id="questions">
+            <div class="question">
+                1) 친부모님 중 고관절 대퇴부 골절
+                <div class="answer-container">
+                    <button class="answer-button" onclick="selectAnswer(1, 'yes')">① 예</button>
+                    <button class="answer-button" onclick="selectAnswer(1, 'no')">② 아니오</button>
+                </div>
+            </div>
+
+            <div class="question">
+                2) 친어머님이 65세 이전에 뇌경색, 뇌출혈, 심근경색증 발생
+                <div class="answer-container">
+                    <button class="answer-button" onclick="selectAnswer(2, 'yes')">① 예</button>
+                    <button class="answer-button" onclick="selectAnswer(2, 'no')">② 아니오</button>
+                </div>
+            </div>
+
+            <div class="question">
+                3) 친아버님이 55세 이전에 뇌경색, 뇌출혈, 심근경색증 발생
+                <div class="answer-container">
+                    <button class="answer-button" onclick="selectAnswer(3, 'yes')">① 예</button>
+                    <button class="answer-button" onclick="selectAnswer(3, 'no')">② 아니오</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-buttons">
+            <button class="back-button" onclick="goBack()">뒤로</button>
+            <button class="next-button" id="nextButton" onclick="goToNextPage()" disabled>다음 ➤</button>
+        </div>
+    </div>
+
+    <script>
+        let answers = {};
+
+        function selectAnswer(questionNumber, answer) {
+            let buttons = document.querySelectorAll(`.question:nth-child(${questionNumber}) .answer-button`);
+            buttons.forEach(btn => btn.classList.remove('selected'));
+
+            if (answer === 'yes') {
+                buttons[0].classList.add('selected');
+                answers[questionNumber] = 'yes';
+            } else {
+                buttons[1].classList.add('selected');
+                answers[questionNumber] = 'no';
+            }
+
+            checkAllAnswered();
+        }
+
+        function checkAllAnswered() {
+            let nextButton = document.getElementById("nextButton");
+            let allAnswered = Object.keys(answers).length === 3;
+
+            if (allAnswered) {
+                nextButton.classList.add('active');
+                nextButton.disabled = false;
+            } else {
+                nextButton.classList.remove('active');
+                nextButton.disabled = true;
+            }
+        }
+
+        function goBack() { alert("이전 페이지로 이동합니다."); }
+        function goToNextPage() {
+    window.location.href = "survey-step7.html";  // 다음 페이지의 URL을 입력
+}
+    </script>
+
+</body>
+</html>
